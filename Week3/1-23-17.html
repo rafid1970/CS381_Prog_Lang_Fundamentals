@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+    <body>
+        <h2> Object Language</h2>
+        <li> Language we're defining </li>
+        <h2> Metalanguage </h2>
+        <li> Language used to define structure and meaning of the object language </li>
+        <h2> Syntax vs Semantics</h2>
+        <li> Structure vs Meaning </li>
+        <h1> Abstract Syntax Tree</h1>
+        <li> Captures the structure of a program, determines it's semantics </li>
+        <li> Think of an if elif else tree </li>
+        <h2> Grammars </h2>
+        <ol>
+            <li> Start with a nonterminal 's' </li>
+            <li> find production rules with 's' on LHS </li>
+            <li> replace 's' by one possible case on RHS </li>
+        </ol>
+        <h1> Animal Behavior Language </h1> <code>
+          s ==> Sentence ::= n v n | s <strong>and</strong> s
+          <br />
+          n ==> Noun ::= Cats | Dogs | Ducks
+          <br />
+          v ==> Verb ::= chase | Cuddle
+          </code> <br /> <code> s <strong> and </strong> s ==> (s <strong>and</strong> s) <strong>and</strong> s </code> </body>
+
+</html>
