@@ -186,6 +186,8 @@ handleAdd x y = Literal (x + y)
 Define a Haskell function optP :: Prog -> Prog that optimizes all of the expressions contained in a
 given program using optE.
 -----------------------------------------------
+E.G:
+  optP [Move (Add (Literal 3) (Literal 2)) (Literal 2), Move (Add(Literal 3) (Literal 2)) (Literal 2)]
 -}
 
 optP :: Prog -> Prog
@@ -195,13 +197,16 @@ optP (x:xs) = if (checkForAdd x) == True
             else optP xs
 
 
-
 checkForAdd :: Cmd -> Bool
 checkForAdd (Move(Add x y) _) = True
 checkForAdd _ = False
 
 getExpr :: Cmd -> Cmd
-getExpr (Move(Add (Literal x) (Literal y)) (Literal z)) = addBack (optE (Add(Add(Literal x) (Literal y)) (Literal z))) 
+getExpr (Move(Add (Literal x) (Literal y)) (Literal z)) = addBack (optE (Add(Add(Literal x) (Literal y)) (Literal z)))
+
+getExpr (Move(Add (Literal x) (Literal y)) (Var_Name z)) = addBack (optE (Add(Add(Literal x) (Literal y)) (Var_Name z)))
+
 
 addBack :: Expr -> Cmd
 addBack (Add (Literal x) (Literal z)) = Move (Literal x) (Literal z)
+addBack (Add (Literal x) (Var_Name z)) = Move (Literal x) (Var_Name z)
