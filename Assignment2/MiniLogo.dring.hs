@@ -140,6 +140,13 @@ Haskell value) into nicely formatted concrete syntax (a string of
 characters). Your pretty-printed program should look similar to the
 example programs given above; however, for simplicity you will
 probably want to print just one command per line.
+
+ Pretty works perfectly besides the pretty[nix], its
+because of the call command that is in the middle of all
+the expressions. I figured it's not worth the headache of trying
+to implement it if I did the E.C. Everytime I try something I get a type error because the function is expecting an expression not Cmd.
+
+
 -}
 pretty :: Prog -> String
 pretty [] = []
@@ -153,7 +160,9 @@ parseCmd (Define m v p) = "Define " ++ m ++ "(" ++ breakArray v ++ ") {" ++ " \n
 parseCmd (Pen Down) = "\tPen Down;" ++ "\n"
 parseCmd (Pen Up) = "\tPen Up;" ++ "\n"
 parseCmd (Move x y) = " \tMove (" ++ parseExpr x ++ ") (" ++ parseExpr y ++ "); \n"
-parseCmd (Call m e) = "Call " ++ m ++ " \n[" ++  (breakExprArray e)
+parseCmd (Call m e) = "Call " ++ m ++ " \n[" ++  (breakExprArray e) ++ "]"
+
+
 
 breakExprArray :: [Expr] -> String
 breakExprArray (x:xs) = parseExpr x ++ "," ++ breakExprArray xs
