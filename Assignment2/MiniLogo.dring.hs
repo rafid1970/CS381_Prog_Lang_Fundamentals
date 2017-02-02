@@ -23,6 +23,7 @@ cmd 	::= 	pen mode 	change pen mode
 -}
 
 import Prelude hiding(Num)
+import Data.List
 
 type Num = Int
 type Var = String
@@ -160,9 +161,10 @@ parseCmd (Define m v p) = "Define " ++ m ++ "(" ++ breakArray v ++ ") {" ++ " \n
 parseCmd (Pen Down) = "\tPen Down;" ++ "\n"
 parseCmd (Pen Up) = "\tPen Up;" ++ "\n"
 parseCmd (Move x y) = " \tMove (" ++ parseExpr x ++ ") (" ++ parseExpr y ++ "); \n"
-parseCmd (Call m e) = "Call " ++ m ++ " \n[" ++  (breakExprArray e) ++ "]"
+parseCmd (Call m e) = "Call " ++ m ++ " \n[" ++ intercalate "," (map parseExpr e)  ++ "]\n"
 
 
+-- Throws error when nix gets to Call..
 
 breakExprArray :: [Expr] -> String
 breakExprArray (x:xs) = parseExpr x ++ "," ++ breakExprArray xs
