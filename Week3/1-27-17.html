@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <style>
+            #mainLI {
+                color: orange;
+            }
+
+            code {
+                white-space: pre;
+            }
+
+        </style>
+    </head>
+
+    <body>
+        <h1>Grammars</h1>
+        <h3>Generating a program from a grammar</h3>
+        <ol>
+            <li> Start with non terminal s </li>
+            <li> Find production rules via LHS </li>
+            <li> Replace s by one possible case on RHS </li>
+        </ol>
+        <h1> Abstract Syntax Tree </h1>
+        <h1>Parsing</h1>
+        <li> Source Code -> Parser -> Abstract Syntax Tree </li>
+        <li> Pretty Printing </li>
+        <ul>
+            <li> Inverse of Parsing </li>
+            <li> AST -> Pretty Printing -> Source Code </li>
+        </ul>
+        <h3>Translate Grammar into Haskell Data Types </h3>
+        <ol>
+            <li> Basic nonterminal -> Choose Built in type (Int, Bool) </li>
+            <li> Other nonterminal -> define a data type </li>
+            <li> For each production -> define Data constructor </li>
+            <li> Nonterminal to constructor -> args to constructor </li>
+        </ol>
+        <li> <strong>s ::= t*</strong> ==> s is equal to a list of t </li><br /> <code>
+type Comment = String
+type Nat = int
+
+data Expr = Neg Expr
+          | Annot Comment Expr
+          | Add Expr Expr
+          | Mult Expr Expr
+          | Lit Int
+
+
+        </code> </body>
+
+</html>
