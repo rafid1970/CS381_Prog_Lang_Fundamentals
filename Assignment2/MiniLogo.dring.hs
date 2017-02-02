@@ -148,6 +148,7 @@ pretty (x:xs) = parseCmd x ++ pretty xs
 
 -- Need to parse every potential Cmd
 parseCmd :: Cmd -> String
+-- Here the V is an array of strings, while P is a list of commands
 parseCmd (Define m v p) = "Define " ++ m ++ "(" ++ breakArray v ++ ") {" ++ " \n" ++ pretty p ++ "}"
 parseCmd (Pen Down) = "\tPen Down;" ++ "\n"
 parseCmd (Pen Up) = "\tPen Up;" ++ "\n"
@@ -188,6 +189,8 @@ given program using optE.
 -----------------------------------------------
 E.G:
   optP [Move (Add (Literal 3) (Literal 2)) (Literal 2), Move (Add(Literal 3) (Literal 2)) (Literal 2)]
+                              OR
+  optP [Move (Add (Literal 3) (Literal 2)) (Literal 2), Move (Add(Literal 3) (Literal 2)) (Var_Name "x")]
 -}
 
 optP :: Prog -> Prog
