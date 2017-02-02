@@ -161,7 +161,7 @@ parseCmd (Define m v p) = "Define " ++ m ++ "(" ++ breakArray v ++ ") {" ++ " \n
 parseCmd (Pen Down) = "\tPen Down;" ++ "\n"
 parseCmd (Pen Up) = "\tPen Up;" ++ "\n"
 parseCmd (Move x y) = " \tMove (" ++ parseExpr x ++ ") (" ++ parseExpr y ++ "); \n"
-parseCmd (Call m e) = "Call " ++ m ++ " \n[" ++ intercalate "," (map parseExpr e)  ++ "]\n"
+parseCmd (Call m e) = "\tCall " ++ m ++ " \n\t[" ++ intercalate "," (map parseExpr e)  ++ "]\n"
 
 
 -- Throws error when nix gets to Call..
