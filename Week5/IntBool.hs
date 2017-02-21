@@ -66,3 +66,50 @@ sem (Equ x y) = case (sem x, sem y) of
                 B b -> B (not(b))
                 _ -> TypeError
 --              ^^ Turns the Exp -> Value type checking
+
+
+
+
+-- Statically typed variant
+
+data Type = Tint | TBool | TypeErr
+
+
+typeOf :: Exp -> Type
+typeOf (Lit _) -> Tint
+typeOf (Add l r) = case (typeOf l, typeOf r) of
+                      (Tint, Tint) -> Tint
+                      _            -> TypeErr
+typeOf (Equ l r) = case (typeOf l, typeOf r) of
+                      (Tint, Tine)    -> TBool
+                      (TBool, TBool)  -> TBool
+                      _               -> TypeErr
+
+
+-- Define semantics of type correct programs
+sem' :: Exp -> Either Int Bool
+sem' (Lit i) = Left i
+sem' (Add l r) = Left(evalInt l + evalInt r)
+sem' (Equ l r) = Right(sem' l == sem' r)
+sem' (Not e) = Right(not(evalBool))
+
+
+
+--Helper functions for ints and bools respectively
+evalInt :: Exp -> Int
+evalInt e = case sem' e of
+              Left i -> i
+              _      -> error "Internal error! from Int"
+
+evalBool :: Exp -> Int
+evalInt e = case sem' e of
+              Right b -> b
+              _      -> error "Internal error! from Bool"
+
+
+-- Define interpreter
+eval :: Exp -> Value
+eval e = case typeof e of
+            Tint     -> I (evalInt e)
+            TBool    -> B (evalBool e)
+            TypeErr  -> TypeError
