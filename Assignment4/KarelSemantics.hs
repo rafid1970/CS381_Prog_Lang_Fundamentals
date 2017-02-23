@@ -40,17 +40,21 @@ data Stmt = Shutdown                 -- end the program
           | Block   [Stmt]           -- statement block
   deriving (Eq,Show)
 -}
--- ^^ Test these
+-- ^^ Build these
 -- | Valuation function for Stmt.
 stmt :: Stmt -> Defs -> World -> Robot -> Result
 stmt Shutdown   _ _ r = Done r
 stmt Move       defs world robit = if isClear (relativePos Front robit) world == True
                                       then OK world (setPos (getPos robit) robit)
-                                          else Error ( "Shit")
-stmt PickBeeper _ w r = let p = getPos r
-                        in if hasBeeper p w
-                              then OK (decBeeper p w) (incBag r)
-                              else Error ("No beeper to pick at: " ++ show p)
+                                          else Error ( "Not clear dead ahead!" ++ show (isClear ( relativePos Front robit) world))
+stmt PickBeeper  _ w r           = let p = getPos r
+                                      in if hasBeeper p w
+                                          then OK (decBeeper p w) (incBag r)
+                                          else Error ("No beeper to pick at: " ++ show p)
+stmt PutBeeper _ world robit     = let p = getPos robit
+                                      in if (hasBeeper p world)
+                                            then OK (incBeeper p world) (decBag robit)
+                                            else Error ("No beepers in the robit!")
 stmt _ _ _ _ = undefined
 
 -- | Run a Karel program.

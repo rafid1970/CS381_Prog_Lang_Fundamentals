@@ -62,7 +62,7 @@ sem (Equ x y) = case (sem x, sem y) of
                  (I i, I j) -> B (i ==j)
                  (B a, B b) -> B (a == b)
                  _  -> TypeError
- sem (Not n) = case (sem n) of
+sem (Not n) = case (sem n) of
                 B b -> B (not(b))
                 _ -> TypeError
 --              ^^ Turns the Exp -> Value type checking
