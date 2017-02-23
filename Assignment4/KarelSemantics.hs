@@ -44,6 +44,9 @@ data Stmt = Shutdown                 -- end the program
 -- | Valuation function for Stmt.
 stmt :: Stmt -> Defs -> World -> Robot -> Result
 stmt Shutdown   _ _ r = Done r
+stmt Move       defs world robit = if isClear (relativePos Front robit) world == True
+                                      then OK world (setPos (getPos robit) robit)
+                                          else Error ( "Shit")
 stmt PickBeeper _ w r = let p = getPos r
                         in if hasBeeper p w
                               then OK (decBeeper p w) (incBag r)
