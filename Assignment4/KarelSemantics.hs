@@ -44,8 +44,9 @@ data Stmt = Shutdown                 -- end the program
 -- | Valuation function for Stmt.
 stmt :: Stmt -> Defs -> World -> Robot -> Result
 stmt Shutdown   _ _ r = Done r
-stmt Move       defs world robit = if isClear (relativePos Front robit) world == True
-                                      then OK world (setPos (getPos robit) robit)
+stmt Move       defs world robit = let pos = relativePos Front robit
+                                    in if (isClear pos world == True)
+                                      then OK world (setPos pos robit)
                                           else Error ( "Not clear dead ahead!" ++ show (isClear ( relativePos Front robit) world))
 stmt PickBeeper  _ w r           = let p = getPos r
                                       in if hasBeeper p w
