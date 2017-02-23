@@ -55,6 +55,7 @@ stmt PutBeeper _ world robit     = let p = getPos robit
                                       in if (hasBeeper p world)
                                             then OK (incBeeper p world) (decBag robit)
                                             else Error ("No beepers in the robit!")
+stmt (Turn dir) _ world robit    =  OK world (setFacing (cardTurn dir (getFacing robit)) robit)
 stmt _ _ _ _ = undefined
 
 -- | Run a Karel program.
