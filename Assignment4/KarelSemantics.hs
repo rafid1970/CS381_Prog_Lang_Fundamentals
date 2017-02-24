@@ -26,6 +26,7 @@ test (Beeper) world robit = hasBeeper (getPos robit) world  -- get current posit
 test (Empty) world robit = isEmpty robit
 
 
+
 {--
 - | Statements.
 data Stmt = Shutdown                 -- end the program
@@ -44,7 +45,7 @@ data Stmt = Shutdown                 -- end the program
 -- | Valuation function for Stmt.
 stmt :: Stmt -> Defs -> World -> Robot -> Result
 stmt Shutdown   _ _ r = Done r
-stmt Move       defs world robit = let pos = relativePos Front robit
+stmt Move       defs world robit = let pos = relativePos Front robit -- assign pos the position directly infront of robit
                                     in if (isClear pos world == True)
                                       then OK world (setPos pos robit)
                                           else Error ( "Not clear dead ahead!" ++ show (isClear ( relativePos Front robit) world))
@@ -56,8 +57,10 @@ stmt PutBeeper _ world robit     = let p = getPos robit
                                       in if (hasBeeper p world)
                                             then OK (incBeeper p world) (decBag robit)
                                             else Error ("No beepers in the robit!")
-stmt (Turn dir) _ world robit    =  OK world (setFacing (cardTurn dir (getFacing robit)) robit)
-stmt _ _ _ _ = undefined
+stmt (Turn dir) _ world robit    =  OK world (setFacing (cardTurn dir (getFacing robit)) robit) -- get current dir, change to new dir, return result
+stmt (Call macro) defs world robit  = case lookup macro defs of -- evaluate macro in defs list
+                                        (Just body) -> stmt body defs world robit --case of the body returning
+                                        _ -> Error "Hull breach!" -- case of nothing returning
 
 -- | Run a Karel program.
 prog :: Prog -> World -> Robot -> Result
