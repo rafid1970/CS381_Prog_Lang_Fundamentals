@@ -29,8 +29,8 @@ type Domain = Reg -> (Reg,Int)
 sem :: Exp -> Reg -> (Reg,Int)
 sem (Lit i)   = \s -> (s,i)
 sem (Neg e)   = \s -> let (s',n) = sem e s in (s', negate n)
-sem (Add l r) = \s -> let (sl,n) = sem e s
-                          (sr,m) = sem e sl
+sem (Add l r) = \s -> let (sl,n) = sem l s
+                          (sr,m) = sem r sl
                       in (sr,n+m)
 sem (Set e)   = \s -> let (_,n) = sem e s in (n,n)
 sem Get       = \s -> (s,s)
