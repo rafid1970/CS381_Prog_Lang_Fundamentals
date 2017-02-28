@@ -71,7 +71,7 @@ stmt (Iterate 0 eval) defs world robit = OK world robit -- base case
 
 stmt (Iterate num eval) defs world robit = if num /= 0 then
                                             case stmt eval defs world robit of
-                                              OK world' robit' -> stmt (Iterate (num - 1) eval) defs world' robit' -- non
+                                              OK world' robit' -> stmt (Iterate (num - 1) eval) defs world' robit'
                                               Done robit' -> Done robit'
                                               Error eval' -> Error eval'
                                            else Error ("Fail in the loop") -- should never be ran, needed for syntax
@@ -87,12 +87,11 @@ stmt (While crit passed) defs world robit = if (test crit world robit == True) t
                                                  (Error err) -> Error err
                                             else OK world robit
 
-stmt (Block []) defs world robit = OK world robit
-
+stmt (Block []) defs world robit = OK world robit --Base case
 stmt (Block (x:xs)) defs world robit = case stmt x defs world robit of
-                                       (OK world' robit') -> stmt (Block xs) defs world' robit'
-                                       (Done robit') -> Done robit'
-                                       (Error err) -> Error err
+                                       (OK world' robit') -> stmt (Block xs) defs world' robit' -- evaluate statement
+                                       (Done robit') -> Done robit' -- Program ends
+                                       (Error err) -> Error err -- pass along error
 
 -- | Run a Karel program.
 prog :: Prog -> World -> Robot -> Result
