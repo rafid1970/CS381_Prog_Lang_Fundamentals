@@ -49,39 +49,50 @@ stmt Move       defs world robit = let pos = relativePos Front robit -- assign p
                                     in if (isClear pos world == True)
                                       then OK world (setPos pos robit)
                                       else Error ("Blocked at: " ++ show pos)
+
 stmt PickBeeper  _ w r           = let p = getPos r
                                       in if (hasBeeper p w == True)
                                           then OK (decBeeper p w) (incBag r)
                                           else Error ("No beeper to pick at: " ++ show p)
+
 stmt PutBeeper _ world robit     = let p = getPos robit
                                       in if (isEmpty robit == True)
                                             then Error ("No beeper to put.")
                                             else OK (incBeeper p world )(decBag robit)
+
 stmt (Turn dir) _ world robit    = let card = getFacing robit in
                                       OK world (setFacing (cardTurn dir card)  robit) -- get current dir, change to new dir, return result
+
 stmt (Call macro) defs world robit  = case lookup macro defs of -- evaluate macro in defs list
                                         (Just body) -> stmt body defs world robit --case of the body returning, call
                                         _ -> Error ("Undefined macro: " ++ macro) -- case of nothing returning
+
 stmt (Iterate 0 eval) defs world robit = OK world robit -- base case
+
 stmt (Iterate num eval) defs world robit = if num /= 0 then
                                             case stmt eval defs world robit of
                                               OK world' robit' -> stmt (Iterate (num - 1) eval) defs world' robit' -- non
                                               Done robit' -> Done robit'
                                               Error eval' -> Error eval'
                                            else Error ("Fail in the loop") -- should never be ran, needed for syntax
+
 stmt (If try passed failed) defs world robit = if (test try world robit == True)
                                                 then stmt passed defs world robit
                                                 else stmt failed defs world robit
+
 stmt (While crit passed) defs world robit = if (test crit world robit == True) then
                                                case stmt passed defs world robit of
-                                                 OK world' robit' -> stmt (While crit passed) defs world' robit'
-                                                 Done robit' -> Done robit'
-                                                 Error err -> Error err
+                                                 (OK world' robit') -> stmt (While crit passed) defs world' robit'
+                                                 (Done robit') -> Done robit'
+                                                 (Error err) -> Error err
                                             else OK world robit
+
 stmt (Block []) defs world robit = OK world robit
+
 stmt (Block (x:xs)) defs world robit = case stmt x defs world robit of
-                                       OK world' robit' -> stmt (Block xs) defs world' robit'
-                                       Error err -> Error err
+                                       (OK world' robit') -> stmt (Block xs) defs world' robit'
+                                       (Done robit') -> Done robit'
+                                       (Error err) -> Error err
 
 -- | Run a Karel program.
 prog :: Prog -> World -> Robot -> Result
