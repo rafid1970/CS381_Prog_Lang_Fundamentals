@@ -94,42 +94,53 @@ ancestor(X,Y) :- child(Y,Z), child(Z,X).
 ancestor(X,Y) :- child(Y,X).
 
 % Extra credit: Define the predicate `related/2`.
+related(X,Y) :- male(Y), X \= Y.
+related(X,Y) :- female(Y), X \= Y.
 
-related_(X,Y) :- child(X,Y).
-related_(X,Y) :- parent(X,Y).
-related_(X,Y) :- grandparent(X,Y).
-related_(X,Y) :- cousin(X,Y).
-related_(X,Y) :- brother(X,Y).
-related_(X,Y) :- sister(X,Y).
-related_(X,Y) :- sibling(X,Y).
-related_(X,Y) :- aunt(X,Y).
-related_(X,Y) :- uncle(X,Y).
-related_(X,Y) :- siblingInLaw(X,Y).
-related_(X,Y) :- ancestor(X,Y).
-related_(X,Y) :- ancestor(Y,X).
-related_(X,Y) :- married(X,Y).
-related_(X,Y) :- inLaws(X,Y).
-related_(X,Y) :- inLaws(Y,X).
-
-
-inLaws(X,Y) :- married(X,Y).
-inLaws(X,Y) :- married(X,Z), child(Z,Y).
-inLaws(X,Y) :- married(X,Z), sibling(Z,Y).
-inLaws(X,Y) :- married(X,Z), sibling(Q,Z), child(Y,Q).
-
-print(X,Y) :- male(Y), X \= Y.
-print(X,Y) :- female(Y), X \= Y. 
+% ======================================================
 
 %%
 % Part 2. Language implementation
 %%
 
-% bool(true)
-% bool(false)
+% ======================================================
+
+
+% num 	::= 	(any number literal)
+% str 	::= 	(any string literal)
+% bool 	::= 	t   |   f 	                boolean literals
+% prog 	::= 	cmd∗                        sequence of commands
+% cmd 	::= 	num   |   str   |   bool 	  push a literal onto the stack
+%	     | 	add   |   lte 	              number addition/comparison
+%	     | 	if(prog,prog) 	              conditional branching
+
+
+
 
 % 1. Define the predicate `cmd/3`, which describes the effect of executing a
 %    command on the stack.
-%cmd(X,Y,Z) :-
+
+bool(true).
+bool(false).
+
+lit(X) :- number(X).
+lit(X) :- string(X).
+lit(X) :- bool(X).
+lit(X) :- bool(X).
+
+% pushing literal values on the stack
+cmd(Push, OldStack,NewStack) :- lit(Push), NewStack = [Push|OldStack].
+
+% add stuff
+cmd(add, [Left,Right|OldStack], NewStack) :- NewStack = [Result|OldStack], Result is Left+Right.
+
+% less than or equal too stuff
+cmd(lte, [Left,Right|OldStack],NewStack) :- NewStack = [true|OldStack], Left =< Right.
+cmd(lte, [Left,Right|OldStack],NewStack) :- NewStack = [false|OldStack], Left >= Right.
+
+% if stuff
+%cmd(if(Then,Stuff),)
+
 
 
 % 2. Define the predicate `prog/3`, which describes the effect of executing a
