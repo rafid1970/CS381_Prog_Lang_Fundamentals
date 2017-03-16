@@ -69,8 +69,8 @@ sibling(X,Y) :- parent(Z,Y) , parent(Z,X) , X \== Y.
 
 
 % 5. Define two predicates `brother/2` and `sister/2`.
-brother(X,Y) :- sibling(X,Y) , male(X).
-sister(X,Y) :- sibling(X,Y) , female(X).
+brother(X,Y) :- sibling(Y,X) , male(X).
+sister(X,Y) :- sibling(X,Y) , female(Y).
 
 % 6. Define a predicate `siblingInLaw/2`. A sibling-in-law is either married to
 %    a sibling or the sibling of a spouse.
@@ -94,8 +94,12 @@ ancestor(X,Y) :- child(Y,Z), child(Z,X).
 ancestor(X,Y) :- child(Y,X).
 
 % Extra credit: Define the predicate `related/2`.
-related(X,Y) :- male(Y), X \= Y.
-related(X,Y) :- female(Y), X \= Y.
+% Not pretty but it works
+related(_,Y) :- siblingInLaw(Y,_).
+related(_,Y) :- married(Y,_).
+related(_,Y) :- cousin(Y,_).
+related(_,Y) :- ancestor(Y,_).
+
 
 % ======================================================
 
@@ -135,13 +139,16 @@ cmd(Push, OldStack,NewStack) :- lit(Push), NewStack = [Push|OldStack].
 cmd(add, [Left,Right|OldStack], NewStack) :- NewStack = [Result|OldStack], Result is Left+Right.
 
 % less than or equal too stuff
-cmd(lte, [Left,Right|OldStack],NewStack) :- NewStack = [true|OldStack], Left =< Right.
-cmd(lte, [Left,Right|OldStack],NewStack) :- NewStack = [false|OldStack], Left >= Right.
+cmd(lte, [Left,Right|OldStack],NewStack) :- NewStack = [t|OldStack], Left =< Right.
+cmd(lte, [Left,Right|OldStack],NewStack) :- NewStack = [f|OldStack], Left >= Right.
 
 % if stuff
-%cmd(if(Then,Stuff),)
+cmd(if(True,_), [t|OldStack], NewStack) :- prog(True, OldStack, NewStack).
+cmd(if(_,False), [f|OldStack], NewStack) :- prog(False, OldStack, NewStack).
 
 
 
 % 2. Define the predicate `prog/3`, which describes the effect of executing a
 %    program on the stack.
+prog([Cmd], OldStack, NewStack) :- cmd(Cmd, OldStack, NewStack). % base case
+prog([Cmd|Cmds], OldStack, FinalStack) :- cmd(Cmd, OldStack, NewStack), prog(Cmds, NewStack, FinalStack).
